@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}OpenShare · Stockage Sécurisé{% endblock %}</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="{{ url_for('static', filename='tailwind.js') }}"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Poppins', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+  /* Forcer l'affichage et personnaliser la barre de défilement */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f172a; /* Couleur de fond sombre */
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155; /* Couleur du curseur */
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen overflow-y-auto">
+  <div class="flex h-screen w-full relative overflow-hidden">
+    
+    <aside id="megaSidebar" class="w-64 h-full border-r border-slate-800 bg-slate-900/90 flex flex-col justify-between shrink-0 fixed md:static inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-50 no-scrollbar">
+      <div class="p-5 flex flex-col gap-6">
+        <div class="flex items-center justify-between">
+          <a href="{{ url_for('index') }}" class="flex items-center gap-2">
+            <img src="{{ url_for('static', filename='logo_nav.png') }}" alt="OpenShare" class="h-8 object-contain">
+          </a>
+          <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white text-xl">✕</button>
+        </div>
+
+        <a href="{{ url_for('upload') }}" class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all">
+          <span>＋</span> Nouvel upload
+        </a>
+
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">🔍</span>
+          <input type="text" id="megaSidebarSearch" placeholder="Rechercher un fichier..." class="w-full bg-slate-950/60 border border-slate-800 text-slate-200 placeholder-slate-500 text-xs rounded-xl pl-9 pr-4 py-2.5 outline-none focus:border-blue-500 transition-colors">
+        </div>
+      </div>
+
+      <nav class="flex-1 px-3 py-2 space-y-1 overflow-y-auto no-scrollbar">
+        <a href="{{ url_for('index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800 text-blue-400 font-medium transition-all group">
+          <span class="text-xl"></span>
+          <span class="text-sm text-slate-200">Bibliothèque</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition-all group">
+          <span class="text-xl"></span>
+          <span class="text-sm">Images</span>
+        </a>
+        <a href="{{ url_for('settings') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800/40 text-slate-400 hover:text-slate-200 text-sm font-medium transition-all">
+    ⚙️ <span>Paramètres</span>
+        </a>
+      </nav>
+
+      <div class="p-4 border-t border-slate-800 bg-slate-950/40">
+        {% if current_user.is_authenticated %}
+          <div class="flex items-center gap-2 mb-3 px-2">
+            <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-sm font-medium text-slate-300 truncate">{{ current_user.username }}</span>
+          </div>
+          <a href="{{ url_for('auth.logout') }}" class="block text-center text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 font-medium py-2 rounded-lg transition-all">
+            Déconnexion
+          </a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}" class="flex items-center justify-center gap-2 text-sm text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 font-medium py-2.5 rounded-xl transition-all">
+            🔑 Connexion
+          </a>
+        {% endif %}
+      </div>
+    </aside>
+
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"></div>
+
+    <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-slate-950">
+      <header class="h-16 border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-md flex items-center justify-between px-6 shrink-0 z-30">
+        <div class="flex items-center gap-4">
+          <button onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+          <div class="hidden md:block text-xs font-semibold text-slate-500 tracking-wider uppercase">Mon Nuage Resilient</div>
+        </div>
+        <div>
+          <span class="text-[10px] font-bold px-2 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase tracking-widest">MVP Privé</span>
+        </div>
+      </header>
+
+      <main class="flex-grow p-4 md:p-8 overflow-y-auto no-scrollbar relative z-20">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="max-w-4xl mx-auto mb-6 space-y-2">
+              {% for category, message in messages %}
+                <!-- 🚨 CORRECTION ICI : Ajout de la classe flash-message pour le ciblage JS -->
+                <div class="flash-message p-4 rounded-xl text-sm font-medium border text-white flex items-center justify-between {% if category == 'success' %}bg-emerald-500/10 border-emerald-500/20 text-emerald-400{% else %}bg-rose-500/10 border-rose-500/20 text-rose-400{% endif %}">
+                  <span>{{ message }}</span>
+                  <button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100">✕</button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+      </main>
+
+      <footer class="h-10 border-t border-slate-900 bg-slate-900/20 flex items-center justify-center text-[11px] text-slate-600 shrink-0">
+        <p>© 2026 OpenShare · Cryptographie Réseau & Partage Libre</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- 🚨 CORRECTION ICI : Nettoyage des balises script de fin -->
+  <script>
+    lucide.createIcons();
+    
+    function toggleSidebar() {
+      const sidebar = document.getElementById('megaSidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      if (window.innerWidth < 768) {
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+      } else {
+        sidebar.classList.toggle('md:hidden');
+      }
+    }
+
+    const searchInput = document.getElementById('megaSidebarSearch');
+    if (searchInput) {
+      searchInput.addEventListener('keyup', function() {
+        const query = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.table-row-item');
+        rows.forEach(row => {
+          const filenameSpan = row.querySelector('.file-text-name');
+          if (filenameSpan) {
+            const filename = filenameSpan.textContent.toLowerCase();
+            row.style.display = filename.includes(query) ? "" : "none";
+          }
+        });
+      });
+    }
+
+    // Fonction d'auto-disparition des notifications
+    document.addEventListener('DOMContentLoaded', () => {
+      const alerts = document.querySelectorAll('.flash-message');
+
+      alerts.forEach((alert) => {
+        setTimeout(() => {
+          alert.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+          alert.style.opacity = "0";
+          alert.style.transform = "translateY(-10px)";
+
+          setTimeout(() => alert.remove(), 500);
+        }, 4000); 
+      });
+    });
+  </script>
+  
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,50 @@
+/* --- GESTION DE LA SIDEBAR RÉTRACTABLE --- */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 240px;
+  background-color: #0f172a;
+  border-right: 1px solid var(--border-color);
+  padding-top: 80px; /* Pour ne pas être sous la navbar */
+  transition: transform 0.3s ease;
+  z-index: 10;
+}
+
+/* Quand la sidebar a la classe "collapsed", on la pousse hors de l'écran */
+.sidebar.collapsed {
+  transform: translateX(-240px);
+}
+
+/* Zone principale qui se décale selon la sidebar */
+#main {
+  margin-left: 240px;
+  padding: 2rem;
+  transition: margin-left 0.3s ease;
+}
+
+/* Quand la sidebar est masquée, le contenu prend tout l'espace */
+#main.full-width {
+  margin-left: 20px;
+}
+
+/* Style pour rendre le bouton ☰ super visible dans la navbar */
+#toggleBtn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+#toggleBtn:hover {
+  background: #1d4ed8;
+}

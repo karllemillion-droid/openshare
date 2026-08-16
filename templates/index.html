@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+
+  <!-- Entête de la page -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Vos Fichiers</h1>
+      <p class="text-sm text-slate-400">Gérez vos documents stockés et chiffrés en toute sécurité.</p>
+    </div>
+    <a href="{{ url_for('upload') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-blue-500/20">
+      ➕ Nouveau fichier
+    </a>
+  </div>
+
+  <!-- Liste des fichiers -->
+  <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-xl">
+    {% if files %}
+      <div class="space-y-3">
+        {% for file in files %}
+          <div class="flex items-center justify-between p-4 bg-slate-950/50 border border-slate-800/50 rounded-xl hover:border-slate-700/50 transition-all">
+            
+            <!-- Icone & Nom du fichier -->
+            <div class="flex items-center gap-3">
+              <div class="p-2.5 bg-blue-500/10 text-blue-400 rounded-lg">
+                📄
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-slate-200">{{ file.original }}</p>
+                <p class="text-xs text-slate-500">Par : {{ file.username or "Anonyme" }}</p>
+              </div>
+            </div>
+
+            <!-- Actions (Télécharger & Supprimer) -->
+            <div class="flex items-center gap-2">
+              
+              <!-- Bouton Télécharger -->
+              <a href="{{ url_for('download', file_id=file.id) }}" class="px-3 py-1.5 bg-blue-600/10 hover:bg-blue-600 text-blue-400 hover:text-white text-xs font-semibold rounded-lg transition-all">
+                  Télécharger
+              </a>
+
+              <!-- Bouton Supprimer (Visibilité restreinte au propriétaire) -->
+              {% if current_user.is_authenticated and file.owner_id == current_user.id %}
+                <form action="{{ url_for('delete', file_id=file.id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer définitivement ce fichier ?');" class="inline">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-600 text-rose-400 hover:text-white text-xs font-semibold rounded-lg transition-all">
+                    🗑️ Supprimer
+                  </button>
+                </form>
+              {% endif %}
+
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <!-- Si aucun fichier n'existe -->
+      <div class="text-center py-12 text-slate-500 text-sm">
+        <p>Aucun fichier disponible dans votre espace.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

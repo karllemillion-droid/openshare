@@ -1,0 +1,7 @@
+flask>=3.0
+werkzeug>=3.0
+flask-wtf>=1.2          # CSRF protection
+flask-login>=0.6        # Authentification
+flask-limiter>=3.5      # Rate limiting
+python-magic>=0.4       # Validation MIME réelle
+bcrypt>=4.0             # Hachage mots de passe

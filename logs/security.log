@@ -1,0 +1,89 @@
+[2026-06-26 21:07:23,749] WARNING —  * Debugger is active!
+[2026-06-26 21:22:11,542] WARNING —  * Debugger is active!
+[2026-06-26 21:46:11,106] WARNING —  * Debugger is active!
+[2026-06-26 23:01:24,153] WARNING —  * Debugger is active!
+[2026-06-27 00:10:11,231] WARNING —  * Debugger is active!
+[2026-06-28 10:44:12,369] WARNING —  * Debugger is active!
+[2026-06-28 11:02:37,050] WARNING —  * Debugger is active!
+[2026-07-09 00:10:50,256] WARNING —  * Debugger is active!
+[2026-07-09 00:19:02,769] WARNING —  * Debugger is active!
+[2026-07-09 00:19:14,340] WARNING —  * Debugger is active!
+[2026-07-09 00:35:25,081] WARNING —  * Debugger is active!
+[2026-07-09 00:35:35,138] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-09 00:35:35,322] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-09 00:35:35,519] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-09 00:35:37,959] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-09 00:35:39,018] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-09 00:35:39,890] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-09 00:35:40,092] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-09 00:35:42,290] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-09 00:35:46,619] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-09 01:18:18,404] WARNING —  * Debugger is active!
+[2026-07-09 12:29:52,466] WARNING —  * Debugger is active!
+[2026-07-10 01:58:17,793] WARNING —  * Debugger is active!
+[2026-07-10 20:24:09,806] WARNING —  * Debugger is active!
+[2026-07-11 01:23:10,004] WARNING —  * Debugger is active!
+[2026-07-11 01:33:52,591] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:35:54,209] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:35:56,288] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:35:57,061] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:35:57,331] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:35:59,618] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:36:00,261] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:36:00,489] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:36:00,708] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:36:01,009] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:36:01,207] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:36:18,465] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 01:36:37,221] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /
+[2026-07-11 09:19:46,289] WARNING —  * Debugger is active!
+[2026-07-11 14:02:07,187] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-11 14:02:11,715] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 09:06:51,489] WARNING —  * Debugger is active!
+[2026-07-13 10:36:03,398] WARNING —  * Debugger is active!
+[2026-07-13 11:23:17,909] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 11:23:18,140] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 11:23:18,347] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 11:23:19,958] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 11:23:21,037] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 11:23:26,747] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 11:23:55,302] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 13:58:03,523] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 22:03:36,578] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 22:05:40,475] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-13 22:05:47,356] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-14 07:12:19,216] WARNING — Upload refusé — user:karllemillion fichier:'sphere-humide-beaute-abstraite-eau-reflechissante-generee-par-ia_188544-19616.avif' raison:Extension .avif non autorisée.
+[2026-07-14 07:12:50,672] WARNING — Upload refusé — user:karllemillion fichier:'sphere-humide-beaute-abstraite-eau-reflechissante-generee-par-ia_188544-19616.avif' raison:Extension .avif non autorisée.
+[2026-07-14 07:20:20,348] WARNING — Rate limit dépassé — IP: 127.0.0.1 — Route: /upload
+[2026-07-14 10:48:34,544] WARNING —  * Debugger is active!
+[2026-07-14 10:57:21,937] WARNING —  * Debugger is active!
+[2026-07-14 10:58:18,397] WARNING — Upload refusé — user:karllemillion fichier:'OIP.webp' raison:Extension .webp non autorisée.
+[2026-07-14 11:08:09,513] WARNING — Upload refusé — user:karllemillion fichier:'OIP.webp' raison:Extension .webp non autorisée.
+[2026-07-14 11:12:42,214] WARNING —  * Debugger is active!
+[2026-07-14 11:16:01,907] WARNING —  * Debugger is active!
+[2026-07-14 11:23:15,485] WARNING —  * Debugger is active!
+[2026-07-14 11:25:25,092] WARNING —  * Debugger is active!
+[2026-07-14 11:37:13,920] WARNING —  * Debugger is active!
+[2026-07-14 11:43:18,308] WARNING —  * Debugger is active!
+[2026-07-14 11:44:30,646] WARNING —  * Debugger is active!
+[2026-07-14 11:53:58,747] WARNING —  * Debugger is active!
+[2026-07-14 11:54:54,094] WARNING —  * Debugger is active!
+[2026-07-14 14:47:35,673] WARNING —  * Debugger is active!
+[2026-07-14 14:47:45,537] WARNING —  * Debugger is active!
+[2026-07-14 14:58:04,691] WARNING —  * Debugger is active!
+[2026-07-14 15:04:46,394] WARNING —  * Debugger is active!
+[2026-07-14 15:18:01,801] WARNING —  * Debugger is active!
+[2026-07-14 16:32:33,991] WARNING —  * Debugger is active!
+[2026-07-14 20:21:54,043] WARNING —  * Debugger is active!
+[2026-07-16 20:11:07,916] WARNING —  * Debugger is active!
+[2026-07-17 11:12:13,788] WARNING —  * Debugger is active!
+[2026-07-21 21:04:24,967] WARNING —  * Debugger is active!
+[2026-07-21 23:13:57,012] WARNING —  * Debugger is active!
+[2026-07-27 20:15:38,341] WARNING —  * Debugger is active!
+[2026-07-31 21:28:48,361] WARNING —  * Debugger is active!
+[2026-07-31 21:29:36,783] WARNING —  * Debugger is active!
+[2026-08-13 13:21:59,368] WARNING —  * Debugger is active!
+[2026-08-16 21:53:31,473] WARNING —  * Debugger is active!
+[2026-08-16 22:00:04,240] WARNING —  * Debugger is active!
+[2026-08-16 22:17:14,923] WARNING —  * Debugger is active!
+[2026-08-16 22:17:48,641] WARNING —  * Debugger is active!

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}OpenShare · Importer dans le Cloud{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto my-6 px-2 animate-fade-in">
+  
+  <div class="text-center mb-8">
+    <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white mb-2">Ajouter des fichiers</h1>
+    <p class="text-sm text-slate-400 max-w-md mx-auto">Glissez vos documents ci-dessous ou parcourez votre espace local. Taille maximale par fichier : 16 Mo.</p>
+  </div>
+
+  <div class="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl">
+    <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" class="space-y-6" id="uploadForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div id="dropZone" class="group relative border-2 border-dashed border-slate-700/80 hover:border-blue-500 bg-slate-950/40 hover:bg-blue-600/[0.02] rounded-2xl p-10 text-center cursor-pointer transition-all duration-200 select-none">
+        
+        <input type="file" name="file" id="file" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30">
+
+        <div id="dropZonePrompt" class="space-y-4 pointer-events-none relative z-10">
+          <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-blue-600/10 border border-blue-500/20 text-blue-400 text-3xl shadow-inner">
+            📤
+          </div>
+          <div class="space-y-1">
+            <p class="text-sm font-semibold text-slate-200">Glissez-déposez votre fichier ici</p>
+            <p class="text-xs text-slate-500">ou <span class="text-blue-400 font-medium">parcourez vos dossiers</span></p>
+          </div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/50 text-[10px] text-slate-400 font-medium border border-slate-700/40">
+            Max 16 Mo
+          </div>
+        </div>
+
+        <div id="dropZonePreview" class="hidden space-y-5 relative z-40">
+          <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-3xl shadow-inner animate-pulse">
+            ✅
+          </div>
+          
+          <div class="space-y-3 px-4 max-w-md mx-auto text-left">
+            <p id="fileSizeDisplay" class="text-xs text-slate-400 font-mono text-center">0 Ko</p>
+            
+            <div class="space-y-1">
+              <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Renommer l'élément avant envoi :</label>
+              <input type="text" name="custom_filename" id="customFilename" required
+                     class="w-full bg-slate-950/80 border border-slate-800 focus:border-blue-500 text-slate-100 text-sm rounded-xl px-4 py-2.5 outline-none transition-all font-medium">
+            </div>
+          </div>
+
+          <div class="mt-2">
+            <button type="button" id="clearFileBtn" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-500/10 border border-slate-700/60 hover:border-rose-500/20 text-xs text-slate-400 hover:text-rose-400 font-medium transition-all">
+              Changer de fichier
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 px-4 shadow-lg shadow-blue-600/20 active:scale-[0.99] transition-all" id="submitBtn">
+        🚀 Lancer le chiffrement et l'envoi
+      </button>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const fileInput = document.getElementById('file');
+    const dropZone = document.getElementById('dropZone');
+    const promptArea = document.getElementById('dropZonePrompt');
+    const previewArea = document.getElementById('dropZonePreview');
+    const sizeDisplay = document.getElementById('fileSizeDisplay');
+    const customFilenameInput = document.getElementById('customFilename');
+    const clearBtn = document.getElementById('clearFileBtn');
+    const uploadForm = document.getElementById('uploadForm');
+
+    function showPreview(file) {
+      if (!file) return;
+
+      let sizeText = file.size >= 1048576 
+        ? (file.size / 1048576).toFixed(2) + " Mo" 
+        : (file.size / 1024).toFixed(1) + " Ko";
+
+      sizeDisplay.textContent = sizeText;
+      
+      // Injecte le nom d'origine dans le champ modifiable
+      customFilenameInput.value = file.name;
+
+      // Au lieu de "classList.add('hidden')" qui peut casser l'envoi du fichier sur certains navigateurs,
+      // on le rend juste invisible physiquement mais actif dans le DOM
+      fileInput.style.opacity = "0";
+      fileInput.style.height = "1px";
+      fileInput.style.width = "1px";
+      fileInput.classList.remove('absolute', 'inset-0', 'w-full', 'h-full', 'z-30');
+
+      promptArea.classList.add('hidden');
+      previewArea.classList.remove('hidden');
+    }
+
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files.length > 0) {
+        showPreview(fileInput.files[0]);
+      }
+    });
+
+    dropZone.addEventListener('dragover', (e) => { 
+      e.preventDefault(); 
+      if (fileInput.files.length === 0) {
+        dropZone.classList.add('border-blue-500'); 
+      }
+    });
+    
+    dropZone.addEventListener('dragleave', () => { 
+      dropZone.classList.remove('border-blue-500'); 
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-blue-500');
+      if (fileInput.files.length === 0 && e.dataTransfer.files.length > 0) {
+        fileInput.files = e.dataTransfer.files;
+        showPreview(e.dataTransfer.files[0]);
+      }
+    });
+
+    clearBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      fileInput.value = "";
+      customFilenameInput.value = "";
+      
+      // On restaure l'input file comme au début
+      fileInput.style.opacity = "";
+      fileInput.style.height = "";
+      fileInput.style.width = "";
+      fileInput.classList.add('absolute', 'inset-0', 'w-full', 'h-full', 'z-30');
+      
+      previewArea.classList.add('hidden');
+      promptArea.classList.remove('hidden');
+    });
+
+    // SÉCURITÉ D'ENVOI : On s'assure que le champ "custom_filename" est bien rempli avant de partir
+    uploadForm.addEventListener('submit', function(e) {
+      if (fileInput.files.length > 0 && !customFilenameInput.value.trim()) {
+        // Si jamais le champ est vide par erreur, on remet le nom d'origine par sécurité
+        customFilenameInput.value = fileInput.files[0].name;
+      }
+    });
+  })();
+</script>
+{% endblock %}

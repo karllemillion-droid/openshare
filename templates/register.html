@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}OpenShare · Créer un Compte Cloud{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-8 px-2 animate-fade-in">
+  
+  <div class="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+    
+    <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    
+    <div class="text-center mb-6 relative z-10">
+      <div class="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xl mb-4 shadow-inner select-none">
+        🛠️
+      </div>
+      <h1 class="text-2xl font-bold text-white tracking-tight">Créer vos clés d'accès</h1>
+      <p class="text-xs text-slate-400 mt-1">Générez vos identifiants pour l'accès chiffré au réseau OpenShare.</p>
+    </div>
+
+    <form action="{{ url_for('auth.register') }}" method="POST" class="space-y-4 relative z-10" id="registerForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="space-y-1.5">
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Nom d'utilisateur</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-sm">👤</span>
+          <input type="text" name="username" required minlength="3" autocomplete="username"
+                 class="w-full bg-slate-950/60 border border-slate-800 text-slate-200 placeholder-slate-600 text-sm rounded-xl pl-10 pr-4 py-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all"
+                 placeholder="Minimum 3 caractères">
+        </div>
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Mot de passe maître</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-sm">🔒</span>
+          <input type="password" name="password" id="regPassword" required minlength="8" autocomplete="new-password"
+                 class="w-full bg-slate-950/60 border border-slate-800 text-slate-200 placeholder-slate-600 text-sm rounded-xl pl-10 pr-4 py-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all"
+                 placeholder="Minimum 8 caractères">
+        </div>
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Confirmer le mot de passe</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-sm">🔄</span>
+          <input type="password" name="confirm" id="regConfirm" required minlength="8" autocomplete="new-password"
+                 class="w-full bg-slate-950/60 border border-slate-800 text-slate-200 placeholder-slate-600 text-sm rounded-xl pl-10 pr-4 py-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all"
+                 placeholder="Répétez le mot de passe">
+        </div>
+        <p id="matchError" class="text-[11px] text-rose-400 hidden font-medium mt-1">⚠️ Les mots de passe ne correspondent pas.</p>
+      </div>
+
+      <button type="submit" id="submitBtn"
+              class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 px-4 shadow-lg shadow-blue-600/20 active:scale-[0.99] transition-all mt-2">
+        Initialiser mon Espace
+      </button>
+    </form>
+
+    <div class="border-t border-slate-800/60 mt-6 pt-5 text-center relative z-10">
+      <p class="text-xs text-slate-400">
+        Déjà inscrit sur OpenShare ? 
+        <a href="{{ url_for('auth.login') }}" class="text-blue-400 font-semibold hover:underline ml-1">Se connecter</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Validation en temps réel de la correspondance des mots de passe
+  document.addEventListener('DOMContentLoaded', function() {
+    const password = document.getElementById('regPassword');
+    const confirm = document.getElementById('regConfirm');
+    const errorMsg = document.getElementById('matchError');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function checkMatch() {
+      if (confirm.value.length > 0) {
+        if (password.value !== confirm.value) {
+          errorMsg.classList.remove('hidden');
+          confirm.classList.add('border-rose-500');
+          confirm.classList.remove('focus:border-blue-500');
+        } else {
+          errorMsg.classList.add('hidden');
+          confirm.classList.remove('border-rose-500');
+          confirm.classList.add('focus:border-blue-500');
+        }
+      } else {
+        errorMsg.classList.add('hidden');
+        confirm.classList.remove('border-rose-500');
+      }
+    }
+
+    password.addEventListener('input', checkMatch);
+    confirm.addEventListener('input', checkMatch);
+  });
+</script>
+{% endblock %}
