@@ -248,11 +248,12 @@ def file_too_large(e):
 
 
 # ── Lancement ──────────────────────────────────────────────────────────────────
+init_db()
 
 if __name__ == "__main__":
     if app.config.get("UPLOAD_FOLDER"):
         os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
     os.makedirs("logs", exist_ok=True)
-    init_db()
+    
     setup_logging(app)
     app.run(debug=True)
