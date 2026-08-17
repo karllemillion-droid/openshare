@@ -3,7 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}OpenShare · Stockage Sécurisé{% endblock %}</title>
+  <meta name="google-site-verification" content="2hzueFJzeYpzsrWlCeGjd84TGGl93-54yVY_vW60LUM"  />
+  <!-- Référencement de base (SEO) -->
+  <title>{% block title %}OpenShare · Stockage & Partage Sécurisé{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}OpenShare est une plateforme rapide et sécurisée pour stocker, chiffrer et partager vos fichiers en toute simplicité.{% endblock %}">
+  <meta name="keywords" content="OpenShare, partage de fichiers, stockage securise, transfert de fichier, cloud gratuit">
+  <meta name="author" content="OpenShare">
+  <meta name="robots" content="index, follow">
+
+  <!-- Aperçu sur les réseaux sociaux & messageries (WhatsApp, Facebook, LinkedIn) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://openshare-33iv.onrender.com">
+  <meta property="og:title" content="OpenShare · Stockage & Partage Sécurisé">
+  <meta property="og:description" content="Hébergez et partagez vos fichiers en toute sécurité avec OpenShare.">
+  <meta property="og:image" content="{{ url_for('static', filename='favicon.png', _external=True) }}">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="OpenShare · Stockage Sécurisé">
+  <meta name="twitter:description" content="Hébergez et partagez vos fichiers en toute sécurité.">
+
+  <!-- Assets & Styles -->
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -19,21 +39,21 @@
     }
   </script>
   <style>
-  /* Forcer l'affichage et personnaliser la barre de défilement */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #0f172a; /* Couleur de fond sombre */
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #334155; /* Couleur du curseur */
-    border-radius: 4px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #475569;
-  }
-</style>
+    /* Barre de défilement personnalisée */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen overflow-y-auto">
   <div class="flex h-screen w-full relative overflow-hidden">

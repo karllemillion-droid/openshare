@@ -19,6 +19,9 @@ from headers import init_security_headers
 from auth import auth_bp, init_auth
 from limiter import limiter, init_limiter, setup_logging
 
+from datetime import datetime
+from flask import Flask, render_template, make_response, url_for
+
 from dotenv import load_dotenv
 load_dotenv()  # Charge le fichier .env
 
@@ -230,7 +233,63 @@ def settings():
         
     return render_template("settings.html")
 
+#_____ sitemap.xml route________________________________________________________
 
+# ... dans ton fichier app.py ...
+
+@app.route('/sitemap.xml', methods=['GET'])
+def sitemap():
+    """Génère un fichier sitemap.xml dynamique pour OpenShare"""
+    pages = []
+    today = datetime.now().strftime('%Y-%m-%d')
+
+    # 1. Routes statiques publiques de ton application
+    # Structure : (nom_de_la_route_flask, frequence_de_mise_a_jour, priorite)
+    static_routes = [
+        ('index', 'daily', '1.0'),
+        ('login', 'monthly', '0.5'),
+        ('register', 'monthly', '0.5'),
+    ]
+
+    for route_name, changefreq, priority in static_routes:
+        try:
+            # _external=True permet d'obtenir l'URL complète avec le domaine (https://openshare-33iv.onrender.com/...)
+            url = url_for(route_name, _external=True)
+            pages.append({
+                'loc': url,
+                'lastmod': today,
+                'changefreq': changefreq,
+                'priority': priority
+            })
+        except Exception:
+            pass
+
+    # 2. (Optionnel) Ajout des pages dynamiques issues de SQLite
+    # Exemple si tu as une table de fichiers publics accessibles à tous :
+    # public_files = File.query.filter_by(is_public=True).all()
+    # for file in public_files:
+    #     pages.append({
+    #         'loc': url_for('view_file', file_id=file.id, _external=True),
+    #         'lastmod': file.created_at.strftime('%Y-%m-%d'),
+    #         'changefreq': 'weekly',
+    #         'priority': '0.8'
+    #     })
+
+    # Rendu du template XML
+    sitemap_xml = render_template('sitemap.xml', pages=pages)
+    
+    # On précise bien au navigateur/robot qu'il s'agit d'un fichier XML
+    response = make_response(sitemap_xml)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
+
+# __robots.txt route________________________________________________________
+@app.route('/robots.txt', methods=['GET'])
+def robots():
+    content = "User-agent: *\nAllow: /\n\nSitemap: https://openshare-33iv.onrender.com/sitemap.xml"
+    response = make_response(content)
+    response.headers['Content-Type'] = 'text/plain'
+    return response
 # ── Gestion des erreurs ────────────────────────────────────────────────────────
 
 @app.errorhandler(404)
