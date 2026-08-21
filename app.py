@@ -1,12 +1,17 @@
 import os
 import logging
 import uuid  
+from datetime import datetime
+
+from dotenv import load_dotenv
+load_dotenv()  # 1. Chargement du .env EN PREMIER
+
 import boto3
 from botocore.config import Config as BotoConfig
 
 from flask import (
     Flask, render_template, request,
-    redirect, url_for, send_from_directory, flash, abort, Response
+    redirect, url_for, send_from_directory, flash, abort, Response, make_response
 )
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename  
@@ -19,21 +24,16 @@ from headers import init_security_headers
 from auth import auth_bp, init_auth
 from limiter import limiter, init_limiter, setup_logging
 
-from datetime import datetime
-from flask import Flask, render_template, make_response, url_for
-
-from dotenv import load_dotenv
-load_dotenv()  # Charge le fichier .env
-
-# 1. INITIALISATION DE L'APPLICATION FLASK 🚨
+# 1. INITIALISATION DE L'APPLICATION FLASK
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# 2. CONFIGURATION DU CHIFFREMENT 🚨
-app.config["ENCRYPTION_KEY"] = b"qaSP-KO0zYRUbehLkQ4jsQzw8Qw94gyRuxLlurTr6c4="
+# 2. CONFIGURATION DU CHIFFREMENT (Via variable d'environnement)
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY", "qaSP-KO0zYRUbehLkQ4jsQzw8Qw94gyRuxLlurTr6c4=")
+app.config["ENCRYPTION_KEY"] = ENCRYPTION_KEY.encode() if isinstance(ENCRYPTION_KEY, str) else ENCRYPTION_KEY
 fernet = Fernet(app.config["ENCRYPTION_KEY"])
 
-# 3. CONFIGURATION CLOUDFLARE R2 / S3 🚨
+# 3. CONFIGURATION CLOUDFLARE R2 / S3
 app.config["R2_ACCOUNT_ID"] = os.getenv("R2_ACCOUNT_ID", "TON_ACCOUNT_ID_CLOUDFLARE")
 app.config["R2_ACCESS_KEY"] = os.getenv("R2_ACCESS_KEY", "TA_CLE_D_ACCES")
 app.config["R2_SECRET_KEY"] = os.getenv("R2_SECRET_KEY", "TA_CLE_SECRETE")
@@ -50,10 +50,16 @@ s3_client = boto3.client(
 
 # ── Extensions sécurité ────────────────────────────────────────────────────────
 init_security_headers(app)   # CSRF + headers HTTP
-init_auth(app)               # Flask-Login (qui enregistre déjà auth_bp)
+init_auth(app)               # Flask-Login
 init_limiter(app)            # Rate limiting
 
-app.register_blueprint(auth_bp)
+# Enregistre le blueprint uniquement s'il n'est pas déjà enregistré par init_auth
+if "auth" not in app.blueprints:
+    app.register_blueprint(auth_bp)
+
+# ── Initialisation sécurisée de la BDD ─────────────────────────────────────────
+with app.app_context():
+    init_db()
 
 # ── Routes principales ────────────────────────────────────────────────────────
 
@@ -152,21 +158,17 @@ def download(file_id: int):
         abort(404)
 
     try:
-        # 1. Récupération du fichier chiffré depuis Cloudflare R2
         s3_response = s3_client.get_object(
             Bucket=app.config["R2_BUCKET_NAME"],
             Key=row["filename"]
         )
         encrypted_data = s3_response["Body"].read()
-
-        # 2. Déchiffrement à la volée
         decrypted_data = fernet.decrypt(encrypted_data)
 
     except Exception as e:
         flash("Erreur lors de la récupération ou du déchiffrement du fichier.", "error")
         return redirect(url_for("index"))
 
-    # 3. Renvoyer le fichier déchiffré au client
     return Response(
         decrypted_data,
         mimetype=row["mimetype"],
@@ -201,21 +203,18 @@ def delete(file_id: int):
         conn.close()
         abort(404)
 
-    # Vérification de la propriété
     if row["owner_id"] != current_user.id:
         conn.close()
         abort(403)
 
-    # 1. Suppression dans Cloudflare R2
     try:
         s3_client.delete_object(
             Bucket=app.config["R2_BUCKET_NAME"],
             Key=row["filename"]
         )
     except Exception as e:
-        print(f"Erreur lors de la suppression sur R2: {e}")
+        logging.error(f"Erreur suppression R2: {e}")
 
-    # 2. Suppression en base de données
     conn.execute("DELETE FROM files WHERE id = ?", (file_id,))
     conn.commit()
     conn.close()
@@ -233,27 +232,19 @@ def settings():
         
     return render_template("settings.html")
 
-#_____ sitemap.xml route________________________________________________________
-
-# ... dans ton fichier app.py ...
 
 @app.route('/sitemap.xml', methods=['GET'])
 def sitemap():
-    """Génère un fichier sitemap.xml dynamique pour OpenShare"""
     pages = []
     today = datetime.now().strftime('%Y-%m-%d')
-
-    # 1. Routes statiques publiques de ton application
-    # Structure : (nom_de_la_route_flask, frequence_de_mise_a_jour, priorite)
     static_routes = [
         ('index', 'daily', '1.0'),
-        ('login', 'monthly', '0.5'),
-        ('register', 'monthly', '0.5'),
+        ('auth.login', 'monthly', '0.5'),
+        ('auth.register', 'monthly', '0.5'),
     ]
 
     for route_name, changefreq, priority in static_routes:
         try:
-            # _external=True permet d'obtenir l'URL complète avec le domaine (https://openshare-33iv.onrender.com/...)
             url = url_for(route_name, _external=True)
             pages.append({
                 'loc': url,
@@ -264,32 +255,20 @@ def sitemap():
         except Exception:
             pass
 
-    # 2. (Optionnel) Ajout des pages dynamiques issues de SQLite
-    # Exemple si tu as une table de fichiers publics accessibles à tous :
-    # public_files = File.query.filter_by(is_public=True).all()
-    # for file in public_files:
-    #     pages.append({
-    #         'loc': url_for('view_file', file_id=file.id, _external=True),
-    #         'lastmod': file.created_at.strftime('%Y-%m-%d'),
-    #         'changefreq': 'weekly',
-    #         'priority': '0.8'
-    #     })
-
-    # Rendu du template XML
     sitemap_xml = render_template('sitemap.xml', pages=pages)
-    
-    # On précise bien au navigateur/robot qu'il s'agit d'un fichier XML
     response = make_response(sitemap_xml)
     response.headers['Content-Type'] = 'application/xml'
     return response
 
-# __robots.txt route________________________________________________________
+
 @app.route('/robots.txt', methods=['GET'])
 def robots():
     content = "User-agent: *\nAllow: /\n\nSitemap: https://openshare-33iv.onrender.com/sitemap.xml"
     response = make_response(content)
     response.headers['Content-Type'] = 'text/plain'
     return response
+
+
 # ── Gestion des erreurs ────────────────────────────────────────────────────────
 
 @app.errorhandler(404)
@@ -307,8 +286,6 @@ def file_too_large(e):
 
 
 # ── Lancement ──────────────────────────────────────────────────────────────────
-init_db()
-
 if __name__ == "__main__":
     if app.config.get("UPLOAD_FOLDER"):
         os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
